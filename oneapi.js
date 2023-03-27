@@ -27,7 +27,7 @@ export class Route {
     }
 
     async handle(json, send, req, res) {
-        await this.handler(json, send, req, res)
+        return await this.handler(json, send, req, res)
     }
 }
 
@@ -85,12 +85,20 @@ export class OneApi {
 
         for (const route of api.routes) {
             if (route.validate(req)) {
-                return await route.handle(req.body, send, req, res)
+                const resp = await route.handle(req.body, send, req, res)
+                if (resp) {
+                    send(resp)
+                }
+                return
             }
         }
 
         if (api.defaultRoute) {
-            return await api.defaultRoute.handle(req.body, send, req, res)
+            const resp = await api.defaultRoute.handle(req.body, send, req, res)
+            if (resp) {
+                send(resp)
+            }
+            return
         }
 
         res.end(JSON.stringify({ error: 'no_route' }))
