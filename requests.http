@@ -1,0 +1,9 @@
+### Send a ping to receive pong
+POST http://localhost:3000
+
+{"type":"ping"}
+
+### Send invalid route
+POST http://localhost:3000
+
+{"asd":"none"}
