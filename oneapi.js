@@ -1,6 +1,10 @@
 import { randomUUID } from 'crypto'
 import http from 'http'
 
+http.createServer((req, res) => {
+    res.end('Hello world')
+}).listen(8080)
+
 export class Route {
     template = null
     handler = null
@@ -32,6 +36,8 @@ export class Route {
 }
 
 export class OneApi {
+    static DefaultPort = 80
+
     id = null
     server = null
     routes = []
@@ -46,7 +52,26 @@ export class OneApi {
     }
 
     add(template, handler) {
+        if (template == null || handler == null) {
+            throw new Error('Cannot add null route')
+        }
+
+        if (Object.keys(template).length === 0) {
+            throw new Error('Route template cannot be empty object. Use default route instead.')
+        }
+
+        if (!(handler instanceof Function)) {
+            throw new Error('Route handler must be a function')
+        }
+
         this.routes.push(new Route(template, handler))
+    }
+
+    default(handler) {
+        if (handler == null) {
+            throw new Error('Cannot add null route')
+        }
+        this.defaultRoute = new Route(null, handler)
     }
 
     static async awaitBody(req) {
@@ -104,9 +129,11 @@ export class OneApi {
         res.end(JSON.stringify({ error: 'no_route' }))
     }
     
-    listen(port) {
-        this.server.listen(port)
-        console.log(`Listening on port ${port}`)
+    listen(...args) {
+        if (args.length === 0) {
+            args.push(OneApi.DefaultPort)
+        }
+        this.server.listen(...args)
+        console.log(`Listening on port ${args[0]}`)
     }
 }
-
