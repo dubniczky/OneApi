@@ -6,4 +6,7 @@ POST http://localhost:3000
 ### Send invalid route
 POST http://localhost:3000
 
-{"asd":"none"}
+### Reflect request (with added middleware data)
+POST http://localhost:3000
+
+{"type":"echo"}

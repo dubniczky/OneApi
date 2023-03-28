@@ -41,6 +41,7 @@ export class OneApi {
     id = null
     server = null
     routes = []
+    middleware = []
     defaultRoute = null
 
     constructor() {
@@ -49,6 +50,18 @@ export class OneApi {
             this.resolve(this, req, res)
         })
         console.log(`Created OneApi instance with id ${this.id}`)
+    }
+
+    use(middleware) {
+        if (middleware == null) {
+            throw new Error('Cannot add null middleware')
+        }
+
+        if (!(middleware instanceof Function)) {
+            throw new Error('Middleware must be a function')
+        }
+
+        this.middleware.push(middleware)
     }
 
     add(template, handler) {
@@ -106,6 +119,16 @@ export class OneApi {
 
         function send(json) {
             res.end(JSON.stringify(json))
+        }
+
+        // Apply middleware
+        for (const middleware of api.middleware) {
+            const resp = await middleware(req.body, req, res)
+            console.log(req.body)
+            if (resp) {
+                send(resp)
+                return
+            }
         }
 
         for (const route of api.routes) {
