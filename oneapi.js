@@ -1,10 +1,6 @@
 import { randomUUID } from 'crypto'
 import http from 'http'
 
-http.createServer((req, res) => {
-    res.end('Hello world')
-}).listen(8080)
-
 export class Route {
     template = null
     handler = null
