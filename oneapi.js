@@ -31,6 +31,11 @@ export class Route {
     }
 }
 
+class FakeConsole {
+    log(...args) { }
+    error(...args) { }
+}
+
 export class OneApi {
     static DefaultPort = 80
 
@@ -39,13 +44,18 @@ export class OneApi {
     routes = []
     middleware = []
     defaultRoute = null
+    logger = console
 
-    constructor() {
+    constructor(debug = false) {
+        if (!debug) {
+            this.logger = new FakeConsole()
+        }
+
         this.id = randomUUID()
         this.server = http.createServer((req, res) => {
             this.resolve(this, req, res)
         })
-        console.log(`Created OneApi instance with id ${this.id}`)
+        this.logger.log(`Created OneApi instance with id ${this.id}`)
     }
 
     use(middleware) {
@@ -104,14 +114,14 @@ export class OneApi {
         }
         catch (e) {
             res.json(JSON.stringify({ error: 'invalid_json' }))
-            console.log("Invalid JSON received")
+            this.logger.log("Invalid JSON received")
             return
         }
 
         // Check body
         if (req.body == null) {
             res.end(JSON.stringify({ error: 'empty_json' }))
-            console.log("Empty JSON received")
+            this.logger.log("Empty JSON received")
             return
         }
 
@@ -122,7 +132,7 @@ export class OneApi {
         // Apply middleware
         for (const middleware of api.middleware) {
             const resp = await middleware(req.body, req, res)
-            console.log(req.body)
+            this.logger.log(req.body)
             if (resp) {
                 send(resp)
                 return
@@ -155,7 +165,7 @@ export class OneApi {
             args.push(OneApi.DefaultPort)
         }
         this.server.listen(...args)
-        console.log(`Listening on port ${args[0]}`)
+        this.logger.log(`Listening on port ${args[0]}`)
         return this.server
     }
 }

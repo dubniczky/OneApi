@@ -12,7 +12,7 @@ function sendJson(oneapi, json) {
 }
 
 
-describe('Server creation', () => {
+describe('Integration tests', () => {
 
     test('Server object is created', () => {
         const api = new OneApi()
@@ -30,6 +30,43 @@ describe('Server creation', () => {
         sendJson(api, { type: 'ping' })
             .then((res) => {
                 expect(res.body).toEqual({ type: 'pong' })
+            })
+    })
+
+    test('Responds with one custom value', () => {
+        const api = new OneApi()
+        
+        api.add({ type: 'random' }, async (json) => {
+            return { random: json.random }
+        })
+
+        const rand = Math.floor(Math.random() * 1000)
+        sendJson(api, { type: 'random', random: rand })
+            .then((res) => {
+                expect(res.body.random).toEqual(rand)
+            })
+    })
+
+    test('Responds with to echo with exact object', () => {
+        const api = new OneApi()
+        
+        api.add({ type: 'echo' }, async (json) => {
+            return json
+        })
+
+        const data = {
+            type: 'echo',
+            a: 1,
+            b: false,
+            c: 'hello',
+            d: [1, 2, 3],
+            e: { a: 1, b: 2, c: 3 },
+            f: null
+        }
+
+        sendJson(api, data)
+            .then((res) => {
+                expect(res.body).toEqual(data)
             })
     })
 })
