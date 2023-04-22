@@ -20,20 +20,20 @@ describe('Integration tests', () => {
         expect(api.server).not.toBe(null)
     })
 
-    test('Responds to ping pong', () => {
+    test('Responds to ping pong', async () => {
         const api = new OneApi()
         
         api.add({ type: 'ping' }, async (json) => {
             return { type: 'pong' }
         })
 
-        sendJson(api, { type: 'ping' })
+        await sendJson(api, { type: 'ping' })
             .then((res) => {
                 expect(res.body).toEqual({ type: 'pong' })
             })
     })
 
-    test('Responds with one custom value', () => {
+    test('Responds with one custom value', async () => {
         const api = new OneApi()
         
         api.add({ type: 'random' }, async (json) => {
@@ -41,13 +41,13 @@ describe('Integration tests', () => {
         })
 
         const rand = Math.floor(Math.random() * 1000)
-        sendJson(api, { type: 'random', random: rand })
+        await sendJson(api, { type: 'random', random: rand })
             .then((res) => {
                 expect(res.body.random).toEqual(rand)
             })
     })
 
-    test('Responds with to echo with exact object', () => {
+    test('Responds with to echo with exact object', async () => {
         const api = new OneApi()
         
         api.add({ type: 'echo' }, async (json) => {
@@ -64,9 +64,18 @@ describe('Integration tests', () => {
             f: null
         }
 
-        sendJson(api, data)
+        await sendJson(api, data)
             .then((res) => {
                 expect(res.body).toEqual(data)
+            })
+    })
+
+    test('Responds default error on unknown path', async () => {
+        const api = new OneApi()
+
+        await sendJson(api, { path: 'asd' })
+            .then((res) => {
+                expect(res.body.error).toEqual('no_route')
             })
     })
 })
