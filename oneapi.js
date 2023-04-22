@@ -96,12 +96,14 @@ export class OneApi {
     }
 
     async resolve(api, req, res) {
+        res.setHeader('Content-Type', 'application/json')
+
         // Parse body
         try {
             req.body = JSON.parse(await OneApi.awaitBody(req))
         }
         catch (e) {
-            res.end(JSON.stringify({ error: 'invalid_json' }))
+            res.json(JSON.stringify({ error: 'invalid_json' }))
             console.log("Invalid JSON received")
             return
         }
@@ -154,5 +156,6 @@ export class OneApi {
         }
         this.server.listen(...args)
         console.log(`Listening on port ${args[0]}`)
+        return this.server
     }
 }
