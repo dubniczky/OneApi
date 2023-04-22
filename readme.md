@@ -1,5 +1,11 @@
 # OneAPI
 
+SON object-based single-endpoint server API
+
+## Overview
+
+This API simplifies the creation of a fully JSON-based HTTP server creation by providing JSON member-based routing. This routing schema allows multi-dimensional routing strategies with multiple or more complex parameters than what normal HTTP headers and paths provide.
+
 ## Example
 
 ```js
