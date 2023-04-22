@@ -113,7 +113,7 @@ export class OneApi {
             req.body = JSON.parse(await OneApi.awaitBody(req))
         }
         catch (e) {
-            res.json(JSON.stringify({ error: 'invalid_json' }))
+            res.end(JSON.stringify({ error: 'invalid_json' }))
             this.logger.log("Invalid JSON received")
             return
         }

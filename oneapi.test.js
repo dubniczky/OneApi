@@ -78,4 +78,16 @@ describe('Integration tests', () => {
                 expect(res.body.error).toEqual('no_route')
             })
     })
+
+    test('Handle invalid JSON', async () => {
+        const api = new OneApi()
+
+        await request(api.server)
+            .post('/')
+            .set('Accept', 'application/json')
+            .send('-')
+            .then((res) => {
+                expect(res.body.error).toEqual('invalid_json')
+            })
+    })
 })
