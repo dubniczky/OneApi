@@ -1,6 +1,6 @@
 {
-  "name": "one-api",
-  "version": "1.0.0",
+  "name": "oneapi.js",
+  "version": "1.0.2",
   "description": "JSON object-based single-endpoint server API for JavaScript",
   "homepage": "https://github.com/dubniczky/OneApi#readme",
   "url": "https://github.com/dubniczky/OneApi",
