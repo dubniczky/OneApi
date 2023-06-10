@@ -26,8 +26,8 @@ export class Route {
         return true
     }
 
-    async handle(json, send, req, res) {
-        return await this.handler(json, send, req, res)
+    async handle(json, req, res) {
+        return await this.handler(json, req, res)
     }
 }
 
@@ -141,7 +141,7 @@ export class OneApi {
 
         for (const route of api.routes) {
             if (route.validate(req)) {
-                const resp = await route.handle(req.body, send, req, res)
+                const resp = await route.handle(req.body, req, res)
                 if (resp) {
                     send(resp)
                 }
@@ -150,7 +150,7 @@ export class OneApi {
         }
 
         if (api.defaultRoute) {
-            const resp = await api.defaultRoute.handle(req.body, send, req, res)
+            const resp = await api.defaultRoute.handle(req.body, req, res)
             if (resp) {
                 send(resp)
             }
@@ -159,7 +159,7 @@ export class OneApi {
 
         res.end(JSON.stringify({ error: 'no_route' }))
     }
-    
+
     listen(...args) {
         if (args.length === 0) {
             args.push(OneApi.DefaultPort)

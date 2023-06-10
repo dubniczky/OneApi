@@ -1,10 +1,10 @@
 # OneAPI
 
-SON object-based single-endpoint server API
+JSON object-based single-endpoint server API for JavaScript
 
 ## Overview
 
-This API simplifies the creation of a fully JSON-based HTTP server creation by providing JSON member-based routing. This routing schema allows multi-dimensional routing strategies with multiple or more complex parameters than what normal HTTP headers and paths provide.
+This API simplifies the creation of a fully JSON-based HTTP server by providing JSON field-based routing. This routing schema allows multi-dimensional routing strategies with more complex parameters than what normal HTTP headers and paths provide.
 
 ## Example
 
@@ -36,4 +36,23 @@ api.default(async (json) => {
 
 // Start listening on port
 api.listen(3000)
+```
+
+You can also specify multiple parameters for your routing. The following example chooses this path if both the `first` and `second` fields are present and contain the specified values.
+
+```js
+api.add({ first: 'a', second: 3 }, async (json) => {
+    return { correct: true }
+})
+```
+
+The OneAPI class uses the standard `http` module from NodeJS and exposes the raw request and response objects where you can check and manipulate headers. This is generally not recommended though, unless your application has to use some form of fixed authentication, such as cookies.
+
+```js
+api.add({ a: 'g' }, async (json, req, res) => {
+    const customHeader = req.headers['custom-header']
+    res.setHeader('custom-header', customHeader)
+
+    return { correct: true }
+})
 ```
